@@ -1,0 +1,63 @@
+{
+  "pessoas": [
+    {
+      "id": 7,
+      "nomeCompleto": "Maria Silva",
+      "email": "maria@gmail.com",
+      "cidadeId": 3
+    },
+    {
+      "nomeCompleto": "Geronimo",
+      "email": "geronimo@gmail.com",
+      "cidadeId": 5,
+      "id": 157
+    }
+  ],
+  "cidades": [
+    {
+      "nome": "Novo Hamburgo",
+      "id": 2
+    },
+    {
+      "nome": "Taquara",
+      "id": 3
+    },
+    {
+      "nome": "Palmitinho",
+      "id": 4
+    },
+    {
+      "nome": "Caxias",
+      "id": 5
+    },
+    {
+      "nome": "Sapucaia do Sul",
+      "id": 6
+    },
+    {
+      "nome": "Tramandaí",
+      "id": 7
+    }
+  ],
+  "auth": {
+    "accessToken": "aaaaaaaaaa.bbbbbbbbbb.cccccccc"
+  },
+  "items": [
+    {
+      "id": 16,
+      "cod": "CP4152",
+      "nome": "Celular",
+      "brand": "Motorola",
+      "model": "G20"
+    },
+    {
+      "cod": "123456",
+      "nome": "Morola X4",
+      "brand": "Morola",
+      "model": "X4",
+      "product_price": "120",
+      "product_cost": "60",
+      "id": 17
+    }
+  ]
+}
