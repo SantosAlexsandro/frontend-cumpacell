@@ -15,5 +15,5 @@ export const Environment = {
   /**
    * Url base de consultado dos dados dessa aplicação
    */
-  URL_BASE: 'https://dash.cumpacell.com',
+  URL_BASE: 'https://api.cumpacell.com/',
 };

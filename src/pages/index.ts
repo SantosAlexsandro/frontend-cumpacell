@@ -9,5 +9,5 @@ export * from './cidades/DetalheDeCidades';
 
 export * from './dashboard/Dashboard';
 
-export * from './transactions/transactionsList';
-export * from './transactions/transactionsDetail';
+export * from './transactions/TransactionsList';
+export * from './transactions/TransactionsDetail';

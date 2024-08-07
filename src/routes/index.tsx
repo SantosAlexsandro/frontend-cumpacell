@@ -10,7 +10,8 @@ import {
   ListagemDePessoas,
   DetalheDeCidades,
   ListagemDeCidades,
-
+  TransactionsList,
+  TransactionsDetail
 } from '../pages';
 
 export const AppRoutes = () => {
@@ -23,12 +24,11 @@ export const AppRoutes = () => {
         path: '/home-inicial',
         label: 'Página inicial',
       },
-      /*
       {
         icon: 'listAltIcon',
-        path: '/items',
-        label: 'Orçamentos',
-      },*/
+        path: '/pre-orcamento',
+        label: 'Pré-Orçamentos',
+      },
       {
         icon: 'inventoryIcon',
         path: '/items',
@@ -42,7 +42,7 @@ export const AppRoutes = () => {
       {
         icon: 'people',
         path: '/pessoas',
-        label: 'Pessoas',
+        label: 'Clientes',
       },
     ]);
   }, []);
@@ -50,6 +50,9 @@ export const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/pagina-inicial" element={<Dashboard />} />
+
+      <Route path="/pre-orcamento" element={< TransactionsList />} />
+      <Route path="/pre-orcamento/detalhes/:id" element={<TransactionsDetail />} />
 
       <Route path="/items" element={<ItemsList />} />
       <Route path="/items/detail/:id" element={<ItemsDetail />} />
