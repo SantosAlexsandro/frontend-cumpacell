@@ -38,7 +38,7 @@ export const TransactionsList: React.FC = () => {
             alert(result.message);
           } else {
             console.log(result);
-
+            console.log('log', result.data);
             setTotalCount(result.totalCount);
             setRows(result.data);
           }
@@ -82,6 +82,7 @@ export const TransactionsList: React.FC = () => {
               <TableCell width={100}>Ações</TableCell>
               <TableCell>Nº</TableCell>
               <TableCell>Data</TableCell>
+              <TableCell>Previsão Chegada</TableCell>
               <TableCell>Cliente</TableCell>
               <TableCell>Valor total</TableCell>
               <TableCell>Situação</TableCell>
@@ -98,10 +99,11 @@ export const TransactionsList: React.FC = () => {
                     <Icon>edit</Icon>
                   </IconButton>
                 </TableCell>
-                <TableCell>{row.cod}</TableCell>
-                <TableCell>{row.date}</TableCell>
+                <TableCell>{row.id}</TableCell>
+                <TableCell>{row.created_at}</TableCell>
+                <TableCell>{row.receiving_date}</TableCell>
                 <TableCell>{row.customer_first_name + ' ' + row.customer_last_name}</TableCell>
-                <TableCell>{row.total_value}</TableCell>
+                <TableCell>{row.total_service_charge}</TableCell>
                 <TableCell>{row.situation}</TableCell>
               </TableRow>
             ))}

@@ -6,10 +6,12 @@ export interface ITransactionList {
   id: number;
   cod: string;
   date: string;
+  created_at: string;
+  receiving_date: string;
   customer_first_name: string;
   customer_middle_name: string;
   customer_last_name: string;
-  total_value: number;
+  total_service_charge: number;
   situation: string;
 }
 
