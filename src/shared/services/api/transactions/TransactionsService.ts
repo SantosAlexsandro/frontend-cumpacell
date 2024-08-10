@@ -8,21 +8,22 @@ export interface ITransactionList {
   date: string;
   created_at: string;
   receiving_date: string;
-  customer_first_name: string;
-  customer_middle_name: string;
-  customer_last_name: string;
+  nome: string;
   total_service_charge: number;
-  situation: string;
+  status_transaction: string;
+  User: {
+    id: number;
+    nome: string;
+    email: string;
+    password_hash: string;
+    created_at: string;
+    updated_at: string;
+  };
 }
 
 export interface ITransactionDetail {
   id: number;
-  nome: string;
-  cod: string;
-  brand?: string;
-  model?: string;
-  product_price?: string;
-  product_cost?: string;
+  defect_description: string;
 }
 
 type TTransactionComTotalCount = {

@@ -52,7 +52,7 @@ export const AppRoutes = () => {
       <Route path="/pagina-inicial" element={<Dashboard />} />
 
       <Route path="/pre-orcamento" element={< TransactionsList />} />
-      <Route path="/pre-orcamento/detalhes/:id" element={<TransactionsDetail />} />
+      <Route path="/pre-orcamento/detalhe/:id" element={<TransactionsDetail />} />
 
       <Route path="/items" element={<ItemsList />} />
       <Route path="/items/detail/:id" element={<ItemsDetail />} />

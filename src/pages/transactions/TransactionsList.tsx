@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import moment from 'moment';
 
 import { ITransactionList, TransactionsService, } from '../../shared/services/api/transactions/TransactionsService';
 import { LayoutBaseDePagina } from '../../shared/layouts';
@@ -14,6 +15,7 @@ export const TransactionsList: React.FC = () => {
   const navigate = useNavigate();
 
   const [rows, setRows] = useState<ITransactionList[]>([]);
+  console.log(rows);
   const [isLoading, setIsLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
 
@@ -70,7 +72,7 @@ export const TransactionsList: React.FC = () => {
           mostrarInputBusca
           textoDaBusca={busca}
           textoBotaoNovo='Novo'
-          aoClicarEmNovo={() => navigate('/items/detail/nova')}
+          aoClicarEmNovo={() => navigate('/pre-orcamento/detalhe/nova')}
           aoMudarTextoDeBusca={texto => setSearchParams({ busca: texto, pagina: '1' }, { replace: true })}
         />
       }
@@ -84,8 +86,8 @@ export const TransactionsList: React.FC = () => {
               <TableCell>Data</TableCell>
               <TableCell>Previsão Chegada</TableCell>
               <TableCell>Cliente</TableCell>
-              <TableCell>Valor total</TableCell>
-              <TableCell>Situação</TableCell>
+              <TableCell>Valor est. (Serviço + PC)</TableCell>
+              <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -100,11 +102,11 @@ export const TransactionsList: React.FC = () => {
                   </IconButton>
                 </TableCell>
                 <TableCell>{row.id}</TableCell>
-                <TableCell>{row.created_at}</TableCell>
-                <TableCell>{row.receiving_date}</TableCell>
-                <TableCell>{row.customer_first_name + ' ' + row.customer_last_name}</TableCell>
-                <TableCell>{row.total_service_charge}</TableCell>
-                <TableCell>{row.situation}</TableCell>
+                <TableCell>{moment(row.created_at).format('L')}</TableCell>
+                <TableCell>{moment(row.receiving_date).format('L')}</TableCell>
+                <TableCell>{rows[0]?.User?.nome}</TableCell>
+                <TableCell>{row.total_service_charge.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})    }</TableCell>
+                <TableCell>{row.status_transaction}</TableCell>
               </TableRow>
             ))}
           </TableBody>

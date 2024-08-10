@@ -1,4 +1,6 @@
 import { BrowserRouter } from 'react-router-dom';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 import './shared/forms/TraducoesYup';
 
@@ -11,21 +13,21 @@ export const App = () => {
   return (
     <AuthProvider>
       <AppThemeProvider>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          <Login>
 
-        <Login>
+            <DrawerProvider>
+              <BrowserRouter>
 
-          <DrawerProvider>
-            <BrowserRouter>
+                <MenuLateral>
+                  <AppRoutes />
+                </MenuLateral>
 
-              <MenuLateral>
-                <AppRoutes />
-              </MenuLateral>
+              </BrowserRouter>
+            </DrawerProvider>
 
-            </BrowserRouter>
-          </DrawerProvider>
-
-        </Login>
-
+          </Login>
+        </LocalizationProvider>
       </AppThemeProvider>
     </AuthProvider>
   );
