@@ -1,9 +1,25 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material';
+import {
+  Icon,
+  IconButton,
+  LinearProgress,
+  Pagination,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableFooter,
+  TableHead,
+  TableRow,
+} from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import moment from 'moment';
 
-import { ITransactionList, TransactionsService, } from '../../shared/services/api/transactions/TransactionsService';
+import {
+  ITransactionList,
+  TransactionsService,
+} from '../../shared/services/api/transactions/TransactionsService';
 import { LayoutBaseDePagina } from '../../shared/layouts';
 import { FerramentasDaListagem } from '../../shared/components';
 import { useDebounce } from '../../shared/hooks';
@@ -27,57 +43,60 @@ export const TransactionsList: React.FC = () => {
     return Number(searchParams.get('pagina') || '1');
   }, [searchParams]);
 
-
   useEffect(() => {
     setIsLoading(true);
 
     debounce(() => {
-      TransactionsService.getAll(pagina, busca)
-        .then((result) => {
-          setIsLoading(false);
+      TransactionsService.getAll(pagina, busca).then((result) => {
+        setIsLoading(false);
 
-          if (result instanceof Error) {
-            alert(result.message);
-          } else {
-            // console.log(result);
-            console.log('log', result.data);
-            setTotalCount(result.totalCount);
-            setRows(result.data);
-          }
-        });
+        if (result instanceof Error) {
+          alert(result.message);
+        } else {
+          // console.log(result);
+          console.log('log', result.data);
+          setTotalCount(result.totalCount);
+          setRows(result.data);
+        }
+      });
     });
   }, [busca, pagina]);
 
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
-      TransactionsService.deleteById(id)
-        .then(result => {
-          if (result instanceof Error) {
-            alert(result.message);
-          } else {
-            setRows(oldRows => [
-              ...oldRows.filter(oldRow => oldRow.id !== id),
-            ]);
-            alert('Registro apagado com sucesso!');
-          }
-        });
+      TransactionsService.deleteById(id).then((result) => {
+        if (result instanceof Error) {
+          alert(result.message);
+        } else {
+          setRows((oldRows) => [
+            ...oldRows.filter((oldRow) => oldRow.id !== id),
+          ]);
+          alert('Registro apagado com sucesso!');
+        }
+      });
     }
   };
 
   return (
     <LayoutBaseDePagina
-      titulo='Listagem de Pré-Orçamentos'
+      titulo="Listagem de Pré-Orçamentos"
       barraDeFerramentas={
         <FerramentasDaListagem
           mostrarInputBusca
           textoDaBusca={busca}
-          textoBotaoNovo='Novo'
+          textoBotaoNovo="Novo"
           aoClicarEmNovo={() => navigate('/pre-orcamentos/detalhe/nova')}
-          aoMudarTextoDeBusca={texto => setSearchParams({ busca: texto, pagina: '1' }, { replace: true })}
+          aoMudarTextoDeBusca={(texto) =>
+            setSearchParams({ busca: texto, pagina: '1' }, { replace: true })
+          }
         />
       }
     >
-      <TableContainer component={Paper} variant="outlined" sx={{ m: 1, width: 'auto' }}>
+      <TableContainer
+        component={Paper}
+        variant="outlined"
+        sx={{ m: 1, width: 'auto' }}
+      >
         <Table>
           <TableHead>
             <TableRow>
@@ -91,21 +110,36 @@ export const TransactionsList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map(row => (
+            {rows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>
                   <IconButton size="small" onClick={() => handleDelete(row.id)}>
                     <Icon>delete</Icon>
                   </IconButton>
-                  <IconButton size="small" onClick={() => navigate(`/items/detail/${row.id}`)}>
+                  <IconButton
+                    size="small"
+                    onClick={() => navigate(`/items/detail/${row.id}`)}
+                  >
                     <Icon>edit</Icon>
                   </IconButton>
                 </TableCell>
                 <TableCell>{row.id}</TableCell>
-                <TableCell>{moment(row.transaction_date).format('L')}</TableCell>
-                <TableCell>{moment(row.defected_items_arrival_date).format('L')}</TableCell>
+                <TableCell>
+                  {moment(row.transaction_date).format('L')}
+                </TableCell>
+                <TableCell>
+                  {moment(row.defected_items_arrival_date).format('L')}
+                </TableCell>
                 <TableCell>{rows[0]?.User?.entity_first_name}</TableCell>
-                <TableCell>{row.transaction_total_amount.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})    }</TableCell>
+                <TableCell>
+                  {row.transaction_total_amount !== undefined &&
+                  row.transaction_total_amount !== null
+                    ? row.transaction_total_amount.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    })
+                    : 'Valor não disponível'}
+                </TableCell>
                 <TableCell>{row.transaction_status}</TableCell>
               </TableRow>
             ))}
@@ -119,17 +153,22 @@ export const TransactionsList: React.FC = () => {
             {isLoading && (
               <TableRow>
                 <TableCell colSpan={3}>
-                  <LinearProgress variant='indeterminate' />
+                  <LinearProgress variant="indeterminate" />
                 </TableCell>
               </TableRow>
             )}
-            {(totalCount > 0 && totalCount > Environment.LIMITE_DE_LINHAS) && (
+            {totalCount > 0 && totalCount > Environment.LIMITE_DE_LINHAS && (
               <TableRow>
                 <TableCell colSpan={3}>
                   <Pagination
                     page={pagina}
                     count={Math.ceil(totalCount / Environment.LIMITE_DE_LINHAS)}
-                    onChange={(_, newPage) => setSearchParams({ busca, pagina: newPage.toString() }, { replace: true })}
+                    onChange={(_, newPage) =>
+                      setSearchParams(
+                        { busca, pagina: newPage.toString() },
+                        { replace: true }
+                      )
+                    }
                   />
                 </TableCell>
               </TableRow>
