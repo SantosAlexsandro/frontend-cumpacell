@@ -26,7 +26,7 @@ export const AppRoutes = () => {
       },
       {
         icon: 'listAltIcon',
-        path: '/pre-orcamento',
+        path: '/pre-orcamentos',
         label: 'Pré-Orçamentos',
       },
       {
@@ -51,8 +51,8 @@ export const AppRoutes = () => {
     <Routes>
       <Route path="/pagina-inicial" element={<Dashboard />} />
 
-      <Route path="/pre-orcamento" element={< TransactionsList />} />
-      <Route path="/pre-orcamento/detalhe/:id" element={<TransactionsDetail />} />
+      <Route path="/pre-orcamentos" element={< TransactionsList />} />
+      <Route path="/pre-orcamentos/detalhe/:id" element={<TransactionsDetail />} />
 
       <Route path="/items" element={<ItemsList />} />
       <Route path="/items/detail/:id" element={<ItemsDetail />} />

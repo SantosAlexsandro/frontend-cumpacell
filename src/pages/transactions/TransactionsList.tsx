@@ -39,7 +39,7 @@ export const TransactionsList: React.FC = () => {
           if (result instanceof Error) {
             alert(result.message);
           } else {
-            console.log(result);
+            // console.log(result);
             console.log('log', result.data);
             setTotalCount(result.totalCount);
             setRows(result.data);
@@ -72,7 +72,7 @@ export const TransactionsList: React.FC = () => {
           mostrarInputBusca
           textoDaBusca={busca}
           textoBotaoNovo='Novo'
-          aoClicarEmNovo={() => navigate('/pre-orcamento/detalhe/nova')}
+          aoClicarEmNovo={() => navigate('/pre-orcamentos/detalhe/nova')}
           aoMudarTextoDeBusca={texto => setSearchParams({ busca: texto, pagina: '1' }, { replace: true })}
         />
       }
@@ -86,7 +86,7 @@ export const TransactionsList: React.FC = () => {
               <TableCell>Data</TableCell>
               <TableCell>Previsão Chegada</TableCell>
               <TableCell>Cliente</TableCell>
-              <TableCell>Valor est. (Serviço + PC)</TableCell>
+              <TableCell>Valor total (Serviço + PCs)</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
@@ -102,11 +102,11 @@ export const TransactionsList: React.FC = () => {
                   </IconButton>
                 </TableCell>
                 <TableCell>{row.id}</TableCell>
-                <TableCell>{moment(row.created_at).format('L')}</TableCell>
-                <TableCell>{moment(row.receiving_date).format('L')}</TableCell>
-                <TableCell>{rows[0]?.User?.nome}</TableCell>
-                <TableCell>{row.total_service_charge.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})    }</TableCell>
-                <TableCell>{row.status_transaction}</TableCell>
+                <TableCell>{moment(row.transaction_date).format('L')}</TableCell>
+                <TableCell>{moment(row.defected_items_arrival_date).format('L')}</TableCell>
+                <TableCell>{rows[0]?.User?.entity_first_name}</TableCell>
+                <TableCell>{row.transaction_total_amount.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})    }</TableCell>
+                <TableCell>{row.transaction_status}</TableCell>
               </TableRow>
             ))}
           </TableBody>

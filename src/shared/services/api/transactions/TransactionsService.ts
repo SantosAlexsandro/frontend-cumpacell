@@ -4,26 +4,31 @@ import { Api } from '../axios-config';
 
 export interface ITransactionList {
   id: number;
-  cod: string;
-  date: string;
-  created_at: string;
-  receiving_date: string;
-  nome: string;
-  total_service_charge: number;
-  status_transaction: string;
+  transaction_status: string;
+  transaction_date: Date;
+  defected_items_arrival_date: Date;
+  entity_first_name: string;
+  transaction_total_amount: number;
+  item_name: string;
   User: {
     id: number;
-    nome: string;
-    email: string;
-    password_hash: string;
-    created_at: string;
-    updated_at: string;
+    entity_first_name: string;
   };
 }
 
 export interface ITransactionDetail {
   id: number;
-  defect_description: string;
+  transaction_situation: string;
+  transaction_date: Date;
+  transaction_arrival_date: Date;
+  customer_first_name: string;
+  customer_phone: string;
+  item_name: string;
+  item_brand: string;
+  item_model_chassis: string;
+  transaction_technical_report: string;
+  transaction_defect_description: string;
+  transaction_service_total: number;
 }
 
 type TTransactionComTotalCount = {
@@ -67,8 +72,9 @@ const getById = async (id: number): Promise<ITransactionDetail | Error> => {
 };
 
 const create = async (dados: Omit<ITransactionDetail, 'id'>): Promise<number | Error> => {
+  console.log('INIT SERVICE', 'INIT');
   try {
-    const { data } = await Api.post<ITransactionDetail>('/items', dados);
+    const { data } = await Api.post<ITransactionDetail>('/pre-orcamentos', dados);
 
     if (data) {
       return data.id;
