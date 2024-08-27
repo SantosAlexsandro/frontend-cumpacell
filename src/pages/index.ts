@@ -1,11 +1,8 @@
 export * from './items/ItemsList';
 export * from './items/ItemsDetail';
 
-export * from './pessoas/ListagemDePessoas';
-export * from './pessoas/DetalheDePessoas';
-
-export * from './cidades/ListagemDeCidades';
-export * from './cidades/DetalheDeCidades';
+export * from './entities/EntitiesList';
+export * from './entities/EntitiesDetail';
 
 export * from './dashboard/Dashboard';
 

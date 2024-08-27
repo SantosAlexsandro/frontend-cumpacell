@@ -6,10 +6,8 @@ import {
   Dashboard,
   ItemsDetail,
   ItemsList,
-  DetalheDePessoas,
-  ListagemDePessoas,
-  DetalheDeCidades,
-  ListagemDeCidades,
+  EntitiesDetail,
+  EntitiesList,
   TransactionsList,
   TransactionsDetail
 } from '../pages';
@@ -25,24 +23,19 @@ export const AppRoutes = () => {
         label: 'Página inicial',
       },
       {
-        icon: 'listAltIcon',
+        icon: 'build',
         path: '/pre-orcamentos',
-        label: 'Pré-Orçamentos',
+        label: 'Transações',
       },
       {
         icon: 'inventoryIcon',
         path: '/items',
-        label: 'Itens/Produtos',
-      },
-      {
-        icon: 'location_city',
-        path: '/cidades',
-        label: 'Cidades',
+        label: 'Itens',
       },
       {
         icon: 'people',
-        path: '/pessoas',
-        label: 'Clientes',
+        path: '/entidades',
+        label: 'Entidades',
       },
     ]);
   }, []);
@@ -57,11 +50,8 @@ export const AppRoutes = () => {
       <Route path="/items" element={<ItemsList />} />
       <Route path="/items/detail/:id" element={<ItemsDetail />} />
 
-      <Route path="/pessoas" element={<ListagemDePessoas />} />
-      <Route path="/pessoas/detalhe/:id" element={<DetalheDePessoas />} />
-
-      <Route path="/cidades" element={<ListagemDeCidades />} />
-      <Route path="/cidades/detalhe/:id" element={<DetalheDeCidades />} />
+      <Route path="/entidades" element={<EntitiesList />} />
+      <Route path="/entidades/detalhe/:id" element={<EntitiesDetail />} />
 
       <Route path="*" element={<Navigate to="/pagina-inicial" />} />
     </Routes>

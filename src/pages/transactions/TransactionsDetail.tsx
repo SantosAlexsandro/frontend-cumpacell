@@ -27,31 +27,41 @@ import { FerramentasDeDetalhe } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
 
 interface IFormData {
-  transaction_situation: string;
+  transaction_status: string;
   transaction_date: Date;
-  transaction_arrival_date: Date;
-  customer_first_name: string;
-  customer_phone: string;
+  defected_items_arrival_date: Date | null | undefined;
+  entity_first_name: string;
+  entity_phone: string | undefined;
   item_name: string;
   item_brand: string;
-  item_model_chassis: string;
-  transaction_technical_report: string;
+  // item_model_chassis: string;
+  transaction_technical_report: string | undefined;
   transaction_defect_description: string;
-  transaction_service_total: number;
+  transaction_total_amount: number | null | undefined;
 }
 
 const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
-  transaction_situation: yup.string().required(),
+  transaction_status: yup.string().required(),
   transaction_date: yup.date().required(),
-  transaction_arrival_date: yup.date().required(),
-  customer_first_name: yup.string().required(),
-  customer_phone: yup.string().required(),
+  defected_items_arrival_date: yup
+    .date()
+    .nullable()
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    }),
+  entity_first_name: yup.string().required(),
+  entity_phone: yup.string(),
   item_name: yup.string().required(),
   item_brand: yup.string().required(),
-  item_model_chassis: yup.string().required(),
-  transaction_technical_report: yup.string().required(),
+  // item_model_chassis: yup.string().required(),
+  transaction_technical_report: yup.string(),
   transaction_defect_description: yup.string().required(),
-  transaction_service_total: yup.number().required(),
+  transaction_total_amount: yup
+    .number()
+    .nullable()
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    }),
 });
 
 export const TransactionsDetail: React.FC = () => {
@@ -83,7 +93,12 @@ export const TransactionsDetail: React.FC = () => {
     <LayoutBaseDePagina
       titulo={id === 'nova' ? 'Novo Pré-orçamento' : nome}
       barraDeFerramentas={
-        <FerramentasDeDetalhe aoClicarEmSalvar={handleSubmit(handleSave)} />
+        <FerramentasDeDetalhe
+          aoClicarEmSalvar={handleSubmit(handleSave)}
+          aoClicarEmVoltar={() => navigate('/pre-orcamentos')}
+          mostrarBotaoNovo={id !== 'nova'}
+          mostrarBotaoApagar={id !== 'nova'}
+        />
       }
     >
       <Box
@@ -107,32 +122,30 @@ export const TransactionsDetail: React.FC = () => {
             <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
               <FormControl
                 sx={{ minWidth: 200 }}
-                error={!!errors.transaction_situation}
+                error={!!errors.transaction_status}
               >
                 <InputLabel>Status</InputLabel>
                 <Controller
-                  name="transaction_situation"
+                  name="transaction_status"
                   control={control}
                   render={({ field }) => (
                     <Select {...field} label="Status">
                       <MenuItem value="">
                         <em>Nenhum</em>
                       </MenuItem>
-                      <MenuItem value={15}>Aguardando</MenuItem>
-                      <MenuItem value={10}>Aprovado</MenuItem>
-                      <MenuItem value={20}>Cancelado</MenuItem>
+                      <MenuItem value={'Aguardando'}>Aguardando</MenuItem>
+                      <MenuItem value={'Aprovado'}>Aprovado</MenuItem>
+                      <MenuItem value={'Cancelado'}>Cancelado</MenuItem>
                     </Select>
                   )}
                 />
                 <FormHelperText>
-                  {errors.transaction_situation?.message}
+                  {errors.transaction_status?.message}
                 </FormHelperText>
               </FormControl>
             </Grid>
 
-          
             <Grid container item direction="row" spacing={2}>
-          
               <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
                 <Controller
                   name="transaction_date"
@@ -141,7 +154,9 @@ export const TransactionsDetail: React.FC = () => {
                     <DatePicker
                       {...field}
                       value={value ? moment(value) : null}
-                      onChange={(date: Moment | null) => onChange(date ? date.toDate() : null)}
+                      onChange={(date: Moment | null) =>
+                        onChange(date ? date.toDate() : null)
+                      }
                       sx={{ width: '100%' }}
                       label="Data Transação"
                       format="DD-MM-YYYY"
@@ -157,24 +172,26 @@ export const TransactionsDetail: React.FC = () => {
                   )}
                 />
               </Grid>
-            
+
               <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
                 <Controller
-                  name="transaction_arrival_date"
+                  name="defected_items_arrival_date"
                   control={control}
                   render={({ field: { onChange, value, ...field } }) => (
                     <DatePicker
                       {...field}
                       format="DD-MM-YYYY"
                       value={value ? moment(value, 'DD-MM-YYYY') : null}
-                      onChange={(date: Moment | null) => onChange(date ? date.toDate() : null)}
+                      onChange={(date: Moment | null) =>
+                        onChange(date ? date.toDate() : null)
+                      }
                       sx={{ width: '100%' }}
                       label="Previsão de chegada"
                       slotProps={{
                         textField: {
-                          error: !!errors.transaction_arrival_date,
-                          helperText: errors.transaction_arrival_date
-                            ? errors.transaction_arrival_date.message
+                          error: !!errors.defected_items_arrival_date,
+                          helperText: errors.defected_items_arrival_date
+                            ? errors.defected_items_arrival_date.message
                             : null,
                         },
                       }}
@@ -182,7 +199,6 @@ export const TransactionsDetail: React.FC = () => {
                   )}
                 />
               </Grid>
-
             </Grid>
             <Grid container item direction="row" spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
@@ -190,9 +206,9 @@ export const TransactionsDetail: React.FC = () => {
                   fullWidth
                   label="Cliente"
                   disabled={isLoading}
-                  {...register('customer_first_name')}
-                  error={!!errors.customer_first_name}
-                  helperText={errors.customer_first_name?.message}
+                  {...register('entity_first_name')}
+                  error={!!errors.entity_first_name}
+                  helperText={errors.entity_first_name?.message}
                 />
               </Grid>
 
@@ -201,9 +217,10 @@ export const TransactionsDetail: React.FC = () => {
                   fullWidth
                   label="Telefone/Celular"
                   disabled={isLoading}
-                  {...register('customer_phone')}
-                  error={!!errors.customer_phone}
-                  helperText={errors.customer_phone?.message}               />
+                  {...register('entity_phone')}
+                  error={!!errors.entity_phone}
+                  helperText={errors.entity_phone?.message}
+                />
               </Grid>
             </Grid>
 
@@ -230,7 +247,8 @@ export const TransactionsDetail: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
+              
+              {/*<Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
                 <TextField
                   fullWidth
                   label="Modelo + Chassis"
@@ -239,13 +257,11 @@ export const TransactionsDetail: React.FC = () => {
                   error={!!errors.item_model_chassis}
                   helperText={errors.item_model_chassis?.message}
                 />
-              </Grid>
+              </Grid>*/}
 
             </Grid>
-           
 
             <Grid container item direction="row" spacing={2}>
-
               <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
                 <TextField
                   fullWidth
@@ -278,20 +294,21 @@ export const TransactionsDetail: React.FC = () => {
                   type="number"
                   label="Total (Serviço + Peças)"
                   InputProps={{
-                    startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                    startAdornment: (
+                      <InputAdornment position="start">R$</InputAdornment>
+                    ),
                   }}
                   inputProps={{
-                    min: 0,  // Limita para valores positivos
-                    step: '0.01',  // Permite casas decimais
+                    min: 0, // Limita para valores positivos
+                    step: '0.01', // Permite casas decimais
                   }}
                   disabled={isLoading}
-                  {...register('transaction_service_total')}
-                  error={!!errors.transaction_service_total}
-                  helperText={errors.transaction_service_total?.message}
+                  {...register('transaction_total_amount')}
+                  error={!!errors.transaction_total_amount}
+                  helperText={errors.transaction_total_amount?.message}
                 />
               </Grid>
             </Grid>
-
           </Grid>
         </Grid>
       </Box>

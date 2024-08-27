@@ -79,7 +79,7 @@ export const TransactionsList: React.FC = () => {
 
   return (
     <LayoutBaseDePagina
-      titulo="Listagem de Pré-Orçamentos"
+      titulo="Listagem de transações"
       barraDeFerramentas={
         <FerramentasDaListagem
           mostrarInputBusca
@@ -101,6 +101,7 @@ export const TransactionsList: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell width={100}>Ações</TableCell>
+              <TableCell>Tipo</TableCell>
               <TableCell>Nº</TableCell>
               <TableCell>Data</TableCell>
               <TableCell>Previsão Chegada</TableCell>
@@ -123,6 +124,7 @@ export const TransactionsList: React.FC = () => {
                     <Icon>edit</Icon>
                   </IconButton>
                 </TableCell>
+                <TableCell>{'Pré-orçamento'}</TableCell>
                 <TableCell>{row.id}</TableCell>
                 <TableCell>
                   {moment(row.transaction_date).format('L')}
@@ -130,7 +132,7 @@ export const TransactionsList: React.FC = () => {
                 <TableCell>
                   {moment(row.defected_items_arrival_date).format('L')}
                 </TableCell>
-                <TableCell>{rows[0]?.User?.entity_first_name}</TableCell>
+                <TableCell>{rows[0]?.Entity?.entity_first_name}</TableCell>
                 <TableCell>
                   {row.transaction_total_amount !== undefined &&
                   row.transaction_total_amount !== null
@@ -138,7 +140,7 @@ export const TransactionsList: React.FC = () => {
                       style: 'currency',
                       currency: 'BRL',
                     })
-                    : 'Valor não disponível'}
+                    : 'Não informado'}
                 </TableCell>
                 <TableCell>{row.transaction_status}</TableCell>
               </TableRow>

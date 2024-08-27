@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
 
-import { CidadesService } from '../../shared/services/api/cidades/CidadesService';
-import { PessoasService } from '../../shared/services/api/pessoas/PessoasService';
+// import { CidadesService } from '../../shared/services/api/cidades/CidadesService';
+import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
 import { FerramentasDaListagem } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
 
@@ -17,22 +17,24 @@ export const Dashboard = () => {
     setIsLoadingCidades(true);
     setIsLoadingPessoas(true);
 
-    CidadesService.getAll(1)
+    /*CidadesService.getAll(1)
       .then((result) => {
         setIsLoadingCidades(false);
 
         if (result instanceof Error) {
-          alert(result.message);
+          // alert(result.message);
+          console.log(result.message);
         } else {
           setTotalCountCidades(result.totalCount);
         }
-      });
+      });*/
     PessoasService.getAll(1)
       .then((result) => {
         setIsLoadingPessoas(false);
 
         if (result instanceof Error) {
-          alert(result.message);
+          // alert(result.message);
+          console.log(result.message);
         } else {
           setTotalCountPessoas(result.totalCount);
         }

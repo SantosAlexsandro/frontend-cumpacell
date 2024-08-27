@@ -10,7 +10,7 @@ export interface ITransactionList {
   entity_first_name: string;
   transaction_total_amount: number;
   item_name: string;
-  User: {
+  Entity: {
     id: number;
     entity_first_name: string;
   };
@@ -18,17 +18,17 @@ export interface ITransactionList {
 
 export interface ITransactionDetail {
   id: number;
-  transaction_situation: string;
+  transaction_status: string;
   transaction_date: Date;
-  transaction_arrival_date: Date;
-  customer_first_name: string;
-  customer_phone: string;
+  defected_items_arrival_date: Date | null | undefined;
+  entity_first_name: string;
+  entity_phone: string | undefined;
   item_name: string;
   item_brand: string;
-  item_model_chassis: string;
-  transaction_technical_report: string;
+  // item_model_chassis: string;
+  transaction_technical_report: string | undefined;
   transaction_defect_description: string;
-  transaction_service_total: number;
+  transaction_total_amount: number | null | undefined;
 }
 
 type TTransactionComTotalCount = {
@@ -74,7 +74,7 @@ const getById = async (id: number): Promise<ITransactionDetail | Error> => {
 const create = async (dados: Omit<ITransactionDetail, 'id'>): Promise<number | Error> => {
   console.log('INIT SERVICE', 'INIT');
   try {
-    const { data } = await Api.post<ITransactionDetail>('/pre-orcamentos', dados);
+    const { data } = await Api.post<ITransactionDetail>('/transactions', dados);
 
     if (data) {
       return data.id;
