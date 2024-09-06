@@ -127,7 +127,7 @@ export const TransactionsList: React.FC = () => {
                 <TableCell>{'Pré-orçamento'}</TableCell>
                 <TableCell>{row.id}</TableCell>
                 <TableCell>
-                  {moment(row.transaction_date).format('L')}
+                  {moment(row.transaction_date).format('DD/MM/YYYY')}
                 </TableCell>
                 <TableCell>
                   {moment(row.defected_items_arrival_date).format('L')}
