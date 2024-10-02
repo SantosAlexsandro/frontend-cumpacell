@@ -81,17 +81,27 @@ export const TransactionsDetail: React.FC = () => {
 
   const handleSave = (data: IFormData) => {
     console.log('INIT', data);
-
+    setIsLoading(true);
     if (id === 'nova') {
       console.log('dadosValidados', data);
       TransactionsService.create(data).then((result) => {
         setIsLoading(false);
+
+        if (result instanceof Error) {
+          alert(result.message);
+        } else {/*
+          if (isSaveAndClose()) {
+            navigate('/items');
+          } else {
+            navigate(`/items/detail/${result}`);
+          }*/
+        }
       });
     }
   };
   return (
     <LayoutBaseDePagina
-      titulo={id === 'nova' ? 'Novo Pré-orçamento' : nome}
+      titulo={id === 'nova' ? 'Nova Ocorrência Externa' : nome}
       barraDeFerramentas={
         <FerramentasDeDetalhe
           aoClicarEmSalvar={handleSubmit(handleSave)}
@@ -247,7 +257,6 @@ export const TransactionsDetail: React.FC = () => {
                 />
               </Grid>
 
-              
               {/*<Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
                 <TextField
                   fullWidth
@@ -258,7 +267,6 @@ export const TransactionsDetail: React.FC = () => {
                   helperText={errors.item_model_chassis?.message}
                 />
               </Grid>*/}
-
             </Grid>
 
             <Grid container item direction="row" spacing={2}>
@@ -287,28 +295,6 @@ export const TransactionsDetail: React.FC = () => {
               </Grid>
             </Grid>
 
-            <Grid container item direction="row" spacing={2}>
-              <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                <TextField
-                  fullWidth
-                  type="number"
-                  label="Total (Serviço + Peças)"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">R$</InputAdornment>
-                    ),
-                  }}
-                  inputProps={{
-                    min: 0, // Limita para valores positivos
-                    step: '0.01', // Permite casas decimais
-                  }}
-                  disabled={isLoading}
-                  {...register('transaction_total_amount')}
-                  error={!!errors.transaction_total_amount}
-                  helperText={errors.transaction_total_amount?.message}
-                />
-              </Grid>
-            </Grid>
           </Grid>
         </Grid>
       </Box>

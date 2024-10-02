@@ -23,20 +23,15 @@ export const AppRoutes = () => {
         label: 'Página inicial',
       },
       {
-        icon: 'build',
-        path: '/pre-orcamentos',
-        label: 'Transações',
-      },
-      {
-        icon: 'inventoryIcon',
-        path: '/items',
-        label: 'Itens',
-      },
-      {
         icon: 'people',
         path: '/entidades',
-        label: 'Entidades',
+        label: 'Entidades Prospects',
       },
+      {
+        icon: 'build',
+        path: '/pre-orcamentos',
+        label: 'Ocorrências Externas',
+      }
     ]);
   }, []);
 

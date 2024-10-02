@@ -50,8 +50,8 @@ export const MenuLateral: React.FC<IMenuLateralProps> = ({ children }) => {
 
           <Box width="100%" height={theme.spacing(20)} display="flex" alignItems="center" justifyContent="center">
             <Avatar
-              sx={{ height: theme.spacing(12), width: theme.spacing(12) }}
-              src="https://yt3.ggpht.com/grfYgQadT8iNg9WPb-jkrKB-9224y_DBDXAOtV4Yt7cyQmtR47J_453uveQOTDsp_dRSH851TMM=s108-c-k-c0x00ffffff-no-rj"
+              sx={{ height: theme.spacing(12), width: theme.spacing(20) }}
+              src="https://ideogram.ai/assets/image/lossless/response/ktaEdkxCS-WbSUlu3lulxA"
             />
           </Box>
 

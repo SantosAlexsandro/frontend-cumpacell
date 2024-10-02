@@ -1,24 +1,40 @@
 import { useEffect, useState } from 'react';
-import { Box, Grid, LinearProgress, Paper, Typography } from '@mui/material';
+import { Box, Grid, LinearProgress, Paper, Typography, Button } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 
 import { PessoasService } from '../../shared/services/api/entities/EntitiesService';
 import { VTextField, VForm, useVForm, IVFormErrors } from '../../shared/forms';
-import { AutoCompleteCidade } from './components/AutoCompleteCidade';
 import { FerramentasDeDetalhe } from '../../shared/components';
 import { LayoutBaseDePagina } from '../../shared/layouts';
 
+interface ICategoria {
+  Operacao: string;
+  Codigo: string;
+}
 
 interface IFormData {
-  email: string;
-  cidadeId: number;
-  nomeCompleto: string;
+  Nome: string;
+  CodigoRegiao: string;
+  CaracteristicaImovel: number; // Use 'number' se espera um número aqui
+  Categorias: ICategoria[]; // Array de categorias
 }
+
 const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
-  cidadeId: yup.number().required(),
-  email: yup.string().required().email(),
-  nomeCompleto: yup.string().required().min(3),
+  Nome: yup.string().required('Nome é obrigatório.'),
+  CodigoRegiao: yup.string().required('Código da região é obrigatório.'),
+  CaracteristicaImovel: yup.number().required('Características do imóvel são obrigatórias.'),
+  Categorias: yup
+    .array()
+    .of(
+      yup.object().shape({
+        Operacao: yup.string().required('Operação é obrigatória.'),
+        Codigo: yup.string().required('Código é obrigatório.'),
+      })
+    )
+    .required()
+    .min(1, 'Deve haver pelo menos uma categoria.')
+    .default([]),
 });
 
 export const EntitiesDetail: React.FC = () => {
@@ -26,113 +42,109 @@ export const EntitiesDetail: React.FC = () => {
   const { id = 'nova' } = useParams<'id'>();
   const navigate = useNavigate();
 
-
   const [isLoading, setIsLoading] = useState(false);
   const [nome, setNome] = useState('');
+  const [categorias, setCategorias] = useState<ICategoria[]>([{ Operacao: '', Codigo: ''}]); // Inicia com uma categoria
 
   useEffect(() => {
     if (id !== 'nova') {
       setIsLoading(true);
-
-      PessoasService.getById(Number(id))
-        .then((result) => {
-          setIsLoading(false);
-
-          if (result instanceof Error) {
-            alert(result.message);
-            navigate('/pessoas');
-          } else {
-            setNome(result.nomeCompleto);
-            formRef.current?.setData(result);
-          }
-        });
+      PessoasService.getById(Number(id)).then((result) => {
+        setIsLoading(false);
+        if (result instanceof Error) {
+          alert(result.message);
+          navigate('/pessoas');
+        } else {
+          setNome(result.Nome);
+          formRef.current?.setData(result);
+          setCategorias(result.Categorias || [{ Operacao: '', Codigo: '' }]);
+        }
+      });
     } else {
       formRef.current?.setData({
-        email: '',
-        nomeCompleto: '',
-        cidadeId: undefined,
+        Nome: '',
+        CodigoRegiao: '',
+        CaracteristicaImovel: undefined,
+        Categorias: [{ Operacao: '', Codigo: '' }],
       });
     }
   }, [id]);
 
-
   const handleSave = (dados: IFormData) => {
-
-    formValidationSchema.
-      validate(dados, { abortEarly: false })
+    console.log('dados', dados);
+    
+    formValidationSchema.validate(dados, { abortEarly: false })
       .then((dadosValidados) => {
         setIsLoading(true);
+        const saveData = { ...dadosValidados, Categorias: categorias };
 
         if (id === 'nova') {
-          PessoasService
-            .create(dadosValidados)
-            .then((result) => {
-              setIsLoading(false);
-
-              if (result instanceof Error) {
-                alert(result.message);
+          PessoasService.create(saveData).then((result) => {
+            setIsLoading(false);
+            if (result instanceof Error) {
+              console.log(result.message);
+            } else {
+              if (isSaveAndClose()) {
+                navigate('/pessoas');
               } else {
-                if (isSaveAndClose()) {
-                  navigate('/pessoas');
-                } else {
-                  navigate(`/pessoas/detalhe/${result}`);
-                }
+                navigate(`/pessoas/detalhe/${result}`);
               }
-            });
+            }
+          });
         } else {
-          PessoasService
-            .updateById(Number(id), { id: Number(id), ...dadosValidados })
-            .then((result) => {
-              setIsLoading(false);
-
-              if (result instanceof Error) {
-                alert(result.message);
-              } else {
-                if (isSaveAndClose()) {
-                  navigate('/pessoas');
-                }
+          PessoasService.updateById(Number(id), { id: Number(id), ...saveData }).then((result) => {
+            setIsLoading(false);
+            if (result instanceof Error) {
+              alert(result.message);
+            } else {
+              if (isSaveAndClose()) {
+                navigate('/pessoas');
               }
-            });
+            }
+          });
         }
       })
       .catch((errors: yup.ValidationError) => {
         const validationErrors: IVFormErrors = {};
-
-        errors.inner.forEach(error => {
+        errors.inner.forEach((error) => {
           if (!error.path) return;
-
           validationErrors[error.path] = error.message;
         });
-
         formRef.current?.setErrors(validationErrors);
       });
   };
 
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
-      PessoasService.deleteById(id)
-        .then(result => {
-          if (result instanceof Error) {
-            alert(result.message);
-          } else {
-            alert('Registro apagado com sucesso!');
-            navigate('/pessoas');
-          }
-        });
+      PessoasService.deleteById(id).then((result) => {
+        if (result instanceof Error) {
+          alert(result.message);
+        } else {
+          alert('Registro apagado com sucesso!');
+          navigate('/pessoas');
+        }
+      });
     }
   };
 
+  const handleAddCategoria = () => {
+    setCategorias([...categorias, { Operacao: '', Codigo: '' }]);
+  };
+
+  const handleRemoveCategoria = (index: number) => {
+    const updatedCategorias = categorias.filter((_, i) => i !== index);
+    setCategorias(updatedCategorias);
+  };
 
   return (
     <LayoutBaseDePagina
-      titulo={id === 'nova' ? 'Nova entidade' : nome}
+      titulo={id === 'nova' ? 'Nova Entidade Prospect' : nome}
       barraDeFerramentas={
         <FerramentasDeDetalhe
           textoBotaoNovo='Nova'
           mostrarBotaoSalvarEFechar
           mostrarBotaoNovo={id !== 'nova'}
           mostrarBotaoApagar={id !== 'nova'}
-
           aoClicarEmSalvar={save}
           aoClicarEmSalvarEFechar={saveAndClose}
           aoClicarEmVoltar={() => navigate('/entidades')}
@@ -142,10 +154,14 @@ export const EntitiesDetail: React.FC = () => {
       }
     >
       <VForm ref={formRef} onSubmit={handleSave}>
-        <Box margin={1} display="flex" flexDirection="column" component={Paper} variant="outlined">
-
-          <Grid container direction="column" padding={2} spacing={2}>
-
+        <Box
+          margin={1}
+          display='flex'
+          flexDirection='column'
+          component={Paper}
+          variant='outlined'
+        >
+          <Grid container direction='column' padding={2} spacing={2}>
             {isLoading && (
               <Grid item>
                 <LinearProgress variant='indeterminate' />
@@ -156,37 +172,85 @@ export const EntitiesDetail: React.FC = () => {
               <Typography variant='h6'>Geral</Typography>
             </Grid>
 
-            <Grid container item direction="row" spacing={2}>
+            <Grid container item direction='row' spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
                 <VTextField
                   fullWidth
-                  name='nomeCompleto'
+                  name='Nome'
                   disabled={isLoading}
-                  label='Nome completo'
-                  onChange={e => setNome(e.target.value)}
+                  label='Nome'
+                  onChange={(e) => setNome(e.target.value)}
                 />
               </Grid>
             </Grid>
 
-            <Grid container item direction="row" spacing={2}>
+            <Grid container item direction='row' spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
                 <VTextField
                   fullWidth
-                  name='email'
-                  label='Email'
+                  name='CodigoRegiao'
+                  label='Código da Região'
                   disabled={isLoading}
                 />
               </Grid>
             </Grid>
 
-            <Grid container item direction="row" spacing={2}>
+            <Grid container item direction='row' spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                <AutoCompleteCidade isExternalLoading={isLoading} />
+                <VTextField
+                  fullWidth
+                  name='CaracteristicaImovel'
+                  label='Característica do Imóvel'
+                  disabled={isLoading}
+                />
               </Grid>
             </Grid>
 
+            {/* Aqui começa a seção de categorias */}
+            <Grid container item direction='row' spacing={2}>
+              <Grid item xs={12}>
+                <Typography variant='h6'>Categorias</Typography>
+              </Grid>
+              {categorias.map((categoria, index) => (
+                <Grid container item key={index} spacing={2}>
+                  <Grid item xs={4}>
+                    <VTextField
+                      fullWidth
+                      name={`Categorias[${index}].Operacao`}
+                      label='Operação'
+                      value={categoria.Operacao}
+                      onChange={(e) => {
+                        const updatedCategorias = [...categorias];
+                        updatedCategorias[index].Operacao = e.target.value;
+                        setCategorias(updatedCategorias);
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <VTextField
+                      fullWidth
+                      name={`Categorias[${index}].Codigo`}
+                      label='Código'
+                      value={categoria.Codigo}
+                      onChange={(e) => {
+                        const updatedCategorias = [...categorias];
+                        updatedCategorias[index].Codigo = e.target.value;
+                        setCategorias(updatedCategorias);
+                      }}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Button onClick={() => handleRemoveCategoria(index)}>Remover</Button>
+                  </Grid>
+                </Grid>
+              ))}
+              <Grid item>
+                <Button onClick={handleAddCategoria}>Adicionar Categoria</Button>
+              </Grid>
+            </Grid>
+            <Grid item>
+            </Grid>
           </Grid>
-
         </Box>
       </VForm>
     </LayoutBaseDePagina>
